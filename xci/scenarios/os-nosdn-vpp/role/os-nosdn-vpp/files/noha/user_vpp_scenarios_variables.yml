@@ -1,0 +1,3 @@
+---
+
+neutron_plugin_type: "ml2.vpp"

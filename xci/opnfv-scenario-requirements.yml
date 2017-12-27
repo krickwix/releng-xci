@@ -38,3 +38,12 @@
     - ha
     - mini
     - noha
+- scenario: os-nosdn-vpp
+  scm: git
+  src: https://github.com/krickwix/releng-xci.git
+  version: os-nosdn-vpp
+  role: xci/scenarios/os-vpp/role/os-vpp
+  flavors:
+    - ha
+    - mini
+    - noha
