@@ -159,6 +159,7 @@ ${ANSIBLE} ${XCI_ANSIBLE_PARAMS} \
     -e create_ipa_image=${CREATE_IPA_IMAGE} \
     -e write_interfaces_file=${WRITE_INTERFACES_FILE} \
     -e ipv4_gateway=192.168.122.1 \
+    -e ipv4_nameserver=192.168.122.1 \
     -e wait_timeout=${PROVISION_WAIT_TIMEOUT} \
     -e enable_keystone=false \
     -e ironicinspector_source_install=true \
