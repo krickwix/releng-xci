@@ -42,7 +42,7 @@
   scm: git
   src: https://github.com/krickwix/releng-xci.git
   version: os-nosdn-vpp
-  role: xci/scenarios/os-vpp/role/os-vpp
+  role: xci/scenarios/os-nosdn-vpp/role/os-nosdn-vpp
   flavors:
     - ha
     - mini
