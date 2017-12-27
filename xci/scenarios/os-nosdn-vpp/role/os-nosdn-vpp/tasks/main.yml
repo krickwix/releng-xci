@@ -1,0 +1,16 @@
+---
+
+- name: copy user_vpp_scenario_variables
+  copy:
+    src: "{{XCI_FLAVOR}}/user_vpp_scenarios_variables.yml"
+    dest: "{{OPENSTACK_OSA_ETC_PATH}}/user_vpp_scenarios_variables.yml"
+
+- name: copy openstack_user_config
+  copy:
+    src: "{{XCI_FLAVOR}}/openstack_user_config.yml"
+    dest: "{{OPENSTACK_OSA_ETC_PATH}}/openstack_user_config.yml"
+
+- name: copy ansible role requirements
+  copy:
+    src: "ansible-role-requirements.yml"
+    dest: "{{OPENSTACK_OSA_ETC_PATH}}/ansible-role-requirements.yml"
