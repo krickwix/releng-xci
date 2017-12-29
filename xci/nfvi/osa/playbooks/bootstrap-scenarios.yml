@@ -21,3 +21,7 @@
   include_role:
     name: "os-odl-sfc"
   when: DEPLOY_SCENARIO == 'os-odl-sfc'
+- name: Prepare everything to run the os-nosdn-vpp scenario
+  include_role:
+    name: "os-nosdn-vpp"
+  when: DEPLOY_SCENARIO == 'os-nosdn-vpp'
