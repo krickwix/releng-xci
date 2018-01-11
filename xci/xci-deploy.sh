@@ -22,7 +22,7 @@ submit_bug_report() {
     echo "openstack/bifrost version: $OPENSTACK_BIFROST_VERSION"
     echo "openstack/openstack-ansible version: $OPENSTACK_OSA_VERSION"
     echo "xci flavor: $XCI_FLAVOR"
-    echo "xci nfvi: $XCI_NFVI"
+    echo "xci installer: $XCI_INSTALLER"
     echo "Environment variables:"
     env | grep --color=never '\(OPNFV\|XCI\|OPENSTACK\)'
     echo "-------------------------------------------------------------------------"
@@ -59,8 +59,8 @@ source $XCI_PATH/xci/config/user-vars
 source $XCI_PATH/xci/config/pinned-versions
 # source flavor configuration
 source "$XCI_PATH/xci/config/${XCI_FLAVOR}-vars"
-# source NFVI configuration
-source "$XCI_PATH/xci/nfvi/${XCI_NFVI}/env" &>/dev/null || true
+# source installer configuration
+source "$XCI_PATH/xci/installer/${XCI_INSTALLER}/env" &>/dev/null || true
 # source xci configuration
 source $XCI_PATH/xci/config/env-vars
 
@@ -87,7 +87,7 @@ echo "Info: Starting XCI Deployment"
 echo "Info: Deployment parameters"
 echo "-------------------------------------------------------------------------"
 echo "xci flavor: $XCI_FLAVOR"
-echo "xci nfvi: $XCI_NFVI"
+echo "xci installer: $XCI_INSTALLER"
 echo "opnfv/releng-xci version: $(git rev-parse HEAD)"
 echo "openstack/bifrost version: $OPENSTACK_BIFROST_VERSION"
 echo "openstack/openstack-ansible version: $OPENSTACK_OSA_VERSION"
@@ -99,24 +99,22 @@ echo "-------------------------------------------------------------------------"
 #-------------------------------------------------------------------------------
 echo "Info: Installing Ansible from pip"
 echo "-------------------------------------------------------------------------"
-source file/install-ansible.sh
+bash files/install-ansible.sh
 echo "-------------------------------------------------------------------------"
 
-# Make the VMs match the host. If we need to make this configurable
-# then this logic has to be moved outside this file
-case ${OS_FAMILY,,} in
+case ${XCI_DISTRO,,} in
     # These should ideally match the CI jobs
-    debian)
+    ubuntu)
         export DIB_OS_RELEASE="${DIB_OS_RELEASE:-xenial}"
         export DIB_OS_ELEMENT="${DIB_OS_ELEMENT:-ubuntu-minimal}"
         export DIB_OS_PACKAGES="${DIB_OS_PACKAGES:-vlan,vim,less,bridge-utils,language-pack-en,iputils-ping,rsyslog,curl,iptables}"
         ;;
-    redhat)
+    centos)
         export DIB_OS_RELEASE="${DIB_OS_RELEASE:-7}"
         export DIB_OS_ELEMENT="${DIB_OS_ELEMENT:-centos-minimal}"
         export DIB_OS_PACKAGES="${DIB_OS_PACKAGES:-vim,less,bridge-utils,iputils,rsyslog,curl,iptables}"
         ;;
-    suse)
+    opensuse)
         export DIB_OS_RELEASE="${DIB_OS_RELEASE:-42.3}"
         export DIB_OS_ELEMENT="${DIB_OS_ELEMENT:-opensuse-minimal}"
         export DIB_OS_PACKAGES="${DIB_OS_PACKAGES:-vim,less,bridge-utils,iputils,rsyslog,curl,iptables}"
@@ -124,7 +122,7 @@ case ${OS_FAMILY,,} in
 esac
 
 # There is no CentOS support at all
-if [[ $OS_FAMILY == RedHat ]]; then
+if [[ ${XCI_DISTRO,,} == centos ]]; then
     echo ""
     echo "Error: Sorry, only Ubuntu and SUSE hosts are supported for now!"
     echo "Error: CentOS 7 support is still work in progress."
@@ -136,7 +134,7 @@ fi
 #-------------------------------------------------------------------------------
 # This playbook
 # - removes existing scenario roles
-# - clones OPNFV scenario roles based on the file/opnfv-scenario-requirements.yml file
+# - clones OPNFV scenario roles based on the xci/opnfv-scenario-requirements.yml file
 #-------------------------------------------------------------------------------
 echo "Info: Cloning OPNFV scenario repositories"
 echo "-------------------------------------------------------------------------"
@@ -175,9 +173,9 @@ echo "-----------------------------------------------------------------------"
 echo "Info: VM nodes are provisioned!"
 echo "-----------------------------------------------------------------------"
 
-# Deploy OpenStack on the selected NFVI
-echo "Info: Deploying '${XCI_NFVI}' NFVI"
+# Deploy OpenStack on the selected installer
+echo "Info: Deploying '${XCI_INSTALLER}' installer"
 echo "-----------------------------------------------------------------------"
-source ${XCI_PATH}/xci/nfvi/${XCI_NFVI}/nfvi-deploy.sh
+source ${XCI_PATH}/xci/installer/${XCI_INSTALLER}/deploy.sh
 
 # vim: set ts=4 sw=4 expandtab:

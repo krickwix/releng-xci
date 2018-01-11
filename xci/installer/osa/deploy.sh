@@ -138,13 +138,6 @@ fi
 #-------------------------------------------------------------------------------
 echo "Info: Verifying database cluster"
 echo "-----------------------------------------------------------------------"
-# Apply SUSE fix until https://review.openstack.org/508154 is merged
-if [[ ${OS_FAMILY,,} == "suse" ]]; then
-	ssh root@$OPNFV_HOST_IP "set -o pipefail; ansible --ssh-extra-args='-o StrictHostKeyChecking=no' \
-		-i releng-xci/.cache/repos/openstack-ansible/playbooks/inventory/ galera_container -m shell \
-		-a \"sed -i \\\"s@/var/run/mysqld/mysqld.sock@/var/run/mysql/mysql.sock@\\\" /etc/my.cnf\""
-fi
-
 ssh root@$OPNFV_HOST_IP "set -o pipefail; ansible --ssh-extra-args='-o StrictHostKeyChecking=no' \
     -i releng-xci/.cache/repos/openstack-ansible/playbooks/inventory/ galera_container -m shell \
 	-a \"mysql -h localhost -e \\\"show status like '%wsrep_cluster_%';\\\"\" | tee galera.log"
@@ -180,7 +173,7 @@ echo "Info: OpenStack installation is successfully completed!"
 #-------------------------------------------------------------------------------
 echo "Info: Openstack login details"
 echo "-----------------------------------------------------------------------"
-OS_USER_CONFIG=$XCI_PATH/xci/file/$XCI_FLAVOR/openstack_user_config.yml
+OS_USER_CONFIG=$XCI_FLAVOR_ANSIBLE_FILE_PATH/openstack_user_config.yml
 python -c \
 "import yaml
 if '$XCI_FLAVOR' is 'aio':
