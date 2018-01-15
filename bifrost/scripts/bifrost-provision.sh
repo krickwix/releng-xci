@@ -22,6 +22,7 @@ PROVISION_WAIT_TIMEOUT=${PROVISION_WAIT_TIMEOUT:-3600}
 # This is normally exported by XCI env but we should initialize it here
 # in case we run this script on its own for debug purposes
 XCI_ANSIBLE_VERBOSITY=${XCI_ANSIBLE_VERBOSITY:-}
+XCI_NAMESERVER=${XCI_NAMESERVER:-8.8.8.8}
 
 # Ensure the right inventory files is used based on branch
 CURRENT_BIFROST_BRANCH=$(git rev-parse --abbrev-ref HEAD)
@@ -125,7 +126,7 @@ ${ANSIBLE} ${XCI_ANSIBLE_VERBOSITY} \
     -e create_ipa_image=${CREATE_IPA_IMAGE} \
     -e write_interfaces_file=${WRITE_INTERFACES_FILE} \
     -e ipv4_gateway=192.168.122.1 \
-    -e ipv4_nameserver=192.168.122.1 \
+    -e ipv4_nameserver=${XCI_NAMESERVER} \
     -e wait_timeout=${PROVISION_WAIT_TIMEOUT} \
     -e enable_keystone=false
 EXITCODE=$?
