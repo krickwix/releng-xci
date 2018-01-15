@@ -27,6 +27,7 @@ BIFROST_IRONIC_INSPECTOR_VERSION=${BIFROST_IRONIC_INSPECTOR_VERSION:-master}
 BIFROST_IRONIC_INSPECTOR_CLIENT_VERSION=${BIFROST_IRONIC_INSPECTOR_CLIENT_VERSION:-master}
 BIFROST_IRONIC_CLIENT_VERSION=${BIFROST_IRONIC_CLIENT_VERSION:-master}
 BIFROST_IRONIC_VERSION=${BIFROST_IRONIC_VERSION:-master}
+XCI_NAMESERVER=${XCI_NAMESERVER:-8.8.8.8}
 
 # Ensure the right inventory files is used based on branch
 CURRENT_BIFROST_BRANCH=$(git rev-parse --abbrev-ref HEAD)
@@ -114,7 +115,7 @@ ${ANSIBLE} ${XCI_ANSIBLE_VERBOSITY} \
        -e ${INVENTORY_FILE_FORMAT}=${BAREMETAL_DATA_FILE}
 
 # Execute the installation and VM startup test
-${ANSIBLE} ${XCI_ANSIBLE_VERBOSITY} \
+${ANIBLE} ${XCI_ANSIBLE_VERBOSITY} \
     -i inventory/bifrost_inventory.py \
     ${TEST_PLAYBOOK} \
     -e use_cirros=${USE_CIRROS} \
@@ -130,7 +131,7 @@ ${ANSIBLE} ${XCI_ANSIBLE_VERBOSITY} \
     -e create_ipa_image=${CREATE_IPA_IMAGE} \
     -e write_interfaces_file=${WRITE_INTERFACES_FILE} \
     -e ipv4_gateway=192.168.122.1 \
-    -e ipv4_nameserver=192.168.122.1 \
+    -e ipv4_nameserver=${XCI_NAMESERVER} \
     -e wait_timeout=${PROVISION_WAIT_TIMEOUT} \
     -e enable_keystone=false \
     -e ironicinspector_source_install=true \
