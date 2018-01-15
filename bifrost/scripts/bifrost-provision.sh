@@ -30,6 +30,7 @@ BIFROST_IRONIC_VERSION=${BIFROST_IRONIC_VERSION:-master}
 
 # set UPPER_CONSTRAINTS_FILE since it is needed in order to limit libvirt-python to 4.0.0
 export UPPER_CONSTRAINTS_FILE=https://git.openstack.org/cgit/openstack/requirements/plain/upper-constraints.txt
+XCI_NAMESERVER=${XCI_NAMESERVER:-8.8.8.8}
 
 # Ensure the right inventory files is used based on branch
 CURRENT_BIFROST_BRANCH=$(git rev-parse --abbrev-ref HEAD)
@@ -159,7 +160,7 @@ ${ANSIBLE} ${XCI_ANSIBLE_PARAMS} \
     -e create_ipa_image=${CREATE_IPA_IMAGE} \
     -e write_interfaces_file=${WRITE_INTERFACES_FILE} \
     -e ipv4_gateway=192.168.122.1 \
-    -e ipv4_nameserver=192.168.122.1 \
+    -e ipv4_nameserver=${XCI_NAMESERVER} \
     -e wait_timeout=${PROVISION_WAIT_TIMEOUT} \
     -e enable_keystone=false \
     -e ironicinspector_source_install=true \
