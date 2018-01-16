@@ -2,8 +2,8 @@
 
 - name: copy user_vpp_scenario_variables
   copy:
-    src: "{{XCI_FLAVOR}}/user_vpp_scenarios_variables.yml"
-    dest: "{{OPENSTACK_OSA_ETC_PATH}}/user_vpp_scenarios_variables.yml"
+    src: "user_vpp_scenarios_variables.yml"
+    dest: "{{OPENSTACK_OSA_ETC_PATH}}/user_variables.yml"
 
 - name: copy openstack_user_config
   copy:
