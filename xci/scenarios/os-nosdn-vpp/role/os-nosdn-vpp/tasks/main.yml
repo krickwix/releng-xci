@@ -1,9 +1,4 @@
 ---
-- name: copy user_vpp_scenario_variables
-  copy:
-    src: "user_variables_os-nosdn-vpp.yml"
-    dest: "{{OPENSTACK_OSA_ETC_PATH}}/user_variables_os-nosdn-vpp.yml"
-
 - name: copy openstack_user_config
   copy:
     src: "{{XCI_FLAVOR}}/openstack_user_config.yml"
@@ -13,4 +8,9 @@
   copy:
     src: "ansible-role-requirements.yml"
     dest: "{{OPENSTACK_OSA_ETC_PATH}}/ansible-role-requirements.yml"
+
+- name: copy user_vpp_scenario_variables
+  copy:
+    src: "user_variables_os-nosdn-vpp.yml"
+    dest: "{{OPENSTACK_OSA_ETC_PATH}}/user_variables_os-nosdn-vpp.yml"
 
