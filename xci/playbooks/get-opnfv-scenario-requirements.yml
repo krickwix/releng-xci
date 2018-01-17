@@ -81,7 +81,6 @@
       failed_when: false
       when:
         - item.stat.exists
-        - item.item.version == 'master'
       with_items: "{{ scenarios_list_exists.results }}"
       loop_control:
         label: "{{ item.item.scenario }}"
