@@ -115,7 +115,7 @@
   version: 07c6cdc462a56e6c76e5071414d35da3878aa14f
 - name: os_neutron
   scm: git
-  src: https://github.com/krickwix/openstack-ansible-os_neutron.git
+  src: https://github.com/krickwix/releng-xci.git
   version: vpp-revert
 - name: os_nova
   scm: git
