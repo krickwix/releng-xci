@@ -32,7 +32,7 @@ global_overrides:
         container_type: "veth"
         container_interface: "eth10"
         type: "vlan"
-        range: "1:1"
+        range: "1:1000"
         net_name: "vlan"
         group_binds:
           - neutron_openvswitch_agent
