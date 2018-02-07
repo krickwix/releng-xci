@@ -23,8 +23,9 @@ submit_bug_report() {
     echo "openstack/openstack-ansible version: $OPENSTACK_OSA_VERSION"
     echo "xci flavor: $XCI_FLAVOR"
     echo "xci installer: $XCI_INSTALLER"
+    echo "xci scenario: $DEPLOY_SCENARIO"
     echo "Environment variables:"
-    env | grep --color=never '\(OPNFV\|XCI\|OPENSTACK\)'
+    env | grep --color=never '\(OPNFV\|XCI\|OPENSTACK\|SCENARIO\)'
     echo "-------------------------------------------------------------------------"
 }
 
@@ -121,15 +122,6 @@ case ${XCI_DISTRO,,} in
         ;;
 esac
 
-# There is no CentOS support at all
-if [[ ${XCI_DISTRO,,} == centos ]]; then
-    echo ""
-    echo "Error: Sorry, only Ubuntu and SUSE hosts are supported for now!"
-    echo "Error: CentOS 7 support is still work in progress."
-    echo ""
-    exit 1
-fi
-
 # Clone OPNFV scenario repositories
 #-------------------------------------------------------------------------------
 # This playbook
@@ -145,9 +137,7 @@ echo "-------------------------------------------------------------------------"
 #-------------------------------------------------------------------------------
 # Get scenario variables overrides
 #-------------------------------------------------------------------------------
-if [[ -f $XCI_SCENARIOS_CACHE/${DEPLOY_SCENARIO:-_no_scenario_}/xci_overrides ]]; then
-    source $XCI_SCENARIOS_CACHE/$DEPLOY_SCENARIO/xci_overrides
-fi
+source $(find $XCI_SCENARIOS_CACHE/${DEPLOY_SCENARIO} -name xci_overrides) &>/dev/null || :
 
 #-------------------------------------------------------------------------------
 # Start provisioning VM nodes

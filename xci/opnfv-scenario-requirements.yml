@@ -40,6 +40,7 @@
       distros:
         - opensuse
         - ubuntu
+        - centos
 
 - scenario: os-odl-nofeature
   scm: git
@@ -64,9 +65,19 @@
   installers:
     - installer: osa
       flavors:
+        - mini
+
+- scenario: k8-nosdn-nofeature
+  scm: git
+  src: https://git.opnfv.org/releng-xci
+  version: master
+  role: xci/scenarios/k8-nosdn-nofeature/role/k8-nosdn-nofeature
+  installers:
+    - installer: kubespray
+      flavors:
+        - aio
         - ha
         - mini
         - noha
       distros:
         - ubuntu
-

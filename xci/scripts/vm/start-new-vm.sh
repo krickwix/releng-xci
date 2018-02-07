@@ -112,31 +112,25 @@ if ! sudo -n "true"; then
 	exit 1
 fi
 
-# Wait 30-120 seconds so we avoid running multiple instances of pkg manager. Of course
-# this will not work as it should if there is an external process running a package
-# manager instance. However, since this script is only being execute on CI nodes which
-# we have complete control it should be mostly fine.
-backoff_time=0
-while [[ ${backoff_time} -le 30 ]]; do
-	backoff_time=$(( $RANDOM % 120 ))
-done
+COMMON_DISTRO_PKGS=(vim strace gdb htop dnsmasq docker iptables ebtables virt-manager qemu-kvm)
 
 case ${ID,,} in
 	*suse)
-		pkg_mgr_cmd="sudo zypper -q -n install virt-manager qemu-kvm qemu-tools libvirt-daemon docker libvirt-client libvirt-daemon-driver-qemu iptables ebtables dnsmasq"
+		pkg_mgr_cmd="sudo zypper -q -n install ${COMMON_DISTRO_PKGS[@]} qemu-kvm qemu-tools libvirt-daemon libvirt-client libvirt-daemon-driver-qemu"
 		;;
 	centos)
-		pkg_mgr_cmd="sudo yum install -q -y epel-release && sudo yum install -q -y in virt-manager qemu-kvm qemu-kvm-tools qemu-img libvirt-daemon-kvm docker iptables ebtables dnsmasq"
+		pkg_mgr_cmd="sudo yum install -q -y epel-release && sudo yum install -q -y in ${COMMON_DISTRO_PKGS[@]} qemu-kvm-tools qemu-img libvirt-daemon-kvm"
 		;;
 	ubuntu)
-		pkg_mgr_cmd="sudo apt-get install -y -q=3 virt-manager qemu-kvm libvirt-bin qemu-utils docker.io docker iptables ebtables dnsmasq"
+		pkg_mgr_cmd="sudo apt-get install -y -q=3 ${COMMON_DISTRO_PKGS[@]} libvirt-bin qemu-utils docker.io"
 		;;
 esac
 
-if pgrep -fa "${pkg_mgr_cmd%*install*}" 2>&1; then
-	sleep ${backoff_time}
-fi
-eval ${pkg_mgr_cmd}
+while true; do
+	pgrep -fa "${pkg_mgr_cmd%*install*}" 2>&1 && sleep 60 || break
+done
+
+eval ${pkg_mgr_cmd} &> /dev/null
 
 echo "Ensuring libvirt and docker services are running..."
 sudo systemctl -q start libvirtd
@@ -179,9 +173,6 @@ declare -r OS_IMAGE_FILE=${OS}.qcow2
 
 [[ ! -e ${OS_IMAGE_FILE} ]] && echo "${OS_IMAGE_FILE} not found! This should never happen!" && exit 1
 
-echo "Resizing disk image '${OS}' to ${DISK}G..."
-qemu-img resize ${OS_IMAGE_FILE} ${DISK}G
-
 echo "Creating new network '${NETWORK}' if it does not exist already..."
 if ! sudo virsh net-list --name --all | grep -q ${NETWORK}; then
 	cat > /tmp/${NETWORK}.xml <<EOF
@@ -206,9 +197,28 @@ fi
 sudo virsh net-list --autostart | grep -q ${NETWORK} || sudo virsh net-autostart ${NETWORK}
 sudo virsh net-list --inactive | grep -q ${NETWORK} && sudo virsh net-start ${NETWORK}
 
+echo "Determining backend storage device..."
+if sudo vgscan | grep -q xci-vm-vg; then
+	echo "Using LVM backend..."
+	lv_dev="/dev/xci-vm-vg/xci-vm-${OS}"
+	echo "Creating new xci-vm-${OS} LV if necessary..."
+	sudo lvscan | grep -q xci-vm-${OS} || {
+		sudo lvcreate -W y -l 33%FREE -n xci-vm-${OS} xci-vm-vg
+		sudo mkfs.ext4 -m 0 ${lv_dev}
+	}
+	echo "Flusing the ${OS_IMAGE_FILE} image to ${lv_dev}..."
+	sudo qemu-img convert -O raw ${OS_IMAGE_FILE} ${lv_dev}
+	disk_config="${lv_dev},cache=directsync,bus=virtio"
+else
+	echo "Using file backend..."
+	echo "Resizing disk image '${OS}' to ${DISK}G..."
+	qemu-img resize ${OS_IMAGE_FILE} ${DISK}G
+	disk_config="${OS_IMAGE_FILE},cache=none,bus=virtio"
+fi
+
 echo "Installing virtual machine '${VM_NAME}'..."
 sudo virt-install -n ${VM_NAME} --memory ${MEMORY} --vcpus ${NCPUS} --cpu ${CPU} \
-	--import --disk=${OS_IMAGE_FILE},cache=none,bus=virtio --network network=${NETWORK},model=virtio \
+	--import --disk=${disk_config} --network network=${NETWORK},model=virtio \
 	--graphics none --hvm --noautoconsole
 
 trap destroy_vm_on_failures EXIT
