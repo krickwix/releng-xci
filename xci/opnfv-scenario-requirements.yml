@@ -87,3 +87,16 @@
       distros:
         - ubuntu
         - centos
+
+- scenario: os-nosdn-fds
+  scm: git
+  src: https://github.com/fds/fds-xci.git
+  version: os-nosdn-fds
+  role: scenarios/os-nosdn-fds/role/os-nosdn-fds
+  installers:
+    - installer: osa
+      flavors:
+        - mini
+      distros:
+        - ubuntu
+
