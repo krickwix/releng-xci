@@ -57,16 +57,6 @@
         - opensuse
         - ubuntu
 
-- scenario: os-nosdn-vpp
-  scm: git
-  src: https://github.com/krickwix/releng-xci.git
-  version: os-nosdn-vpp
-  role: xci/scenarios/os-nosdn-vpp/role/os-nosdn-vpp
-  installers:
-    - installer: osa
-      flavors:
-        - mini
-
 - scenario: k8-nosdn-nofeature
   scm: git
   src: https://git.opnfv.org/releng-xci
@@ -81,3 +71,16 @@
         - noha
       distros:
         - ubuntu
+
+- scenario: os-nosdn-fds
+  scm: git
+  src: https://github.com/krickwix/releng-xci.git
+  version: os-nosdn-fds
+  role: xci/scenarios/os-nosdn-fds/role/os-nosdn-fds
+  installers:
+    - installer: osa
+      flavors:
+        - mini
+      distros:
+        - ubuntu
+
