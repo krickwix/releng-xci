@@ -87,3 +87,16 @@
       distros:
         - ubuntu
         - centos
+
+- scenario: os-nosdn-fds
+  scm: git
+  src: https://github.com/krickwix/releng-xci.git
+  version: os-nosdn-fds
+  role: xci/scenarios/os-nosdn-fds/role/os-nosdn-fds
+  installers:
+    - installer: osa
+      flavors:
+        - mini
+      distros:
+        - ubuntu
+
