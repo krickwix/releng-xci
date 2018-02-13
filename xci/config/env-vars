@@ -3,7 +3,7 @@
 #    Please do not change these settings if you are not developing for XCI!
 #-------------------------------------------------------------------------------
 export OPNFV_RELENG_GIT_URL=https://gerrit.opnfv.org/gerrit/releng-xci.git
-export OPENSTACK_BIFROST_GIT_URL=https://git.openstack.org/openstack/bifrost
+export OPENSTACK_BIFROST_GIT_URL=https://github.com/krickwix/bifrost.git
 export OPENSTACK_OSA_GIT_URL=https://github.com/krickwix/openstack-ansible.git
 export OPENSTACK_OSA_OPENRC_GIT_URL=https://git.openstack.org/openstack/openstack-ansible-openstack_openrc
 export OPENSTACK_OSA_ETC_PATH=/etc/openstack_deploy
