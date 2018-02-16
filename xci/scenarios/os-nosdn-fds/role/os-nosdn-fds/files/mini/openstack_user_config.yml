@@ -40,15 +40,6 @@ global_overrides:
     - network:
         container_bridge: "br-vlan"
         container_type: "veth"
-        container_interface: "eth12"
-        host_bind_override: "eth12"
-        type: "flat"
-        net_name: "flat"
-        group_binds:
-          - neutron_vpp_agent
-    - network:
-        container_bridge: "br-vlan"
-        container_type: "veth"
         container_interface: "eth11"
         type: "vlan"
         range: "1:1"
