@@ -22,3 +22,7 @@ neutron_provider_networks:
   network_flat_networks: "*"
   network_types: "vlan"
   network_vlan_ranges: "physnet1:1:1000"
+
+neutron_dhcp_agent_init_overrides:
+  DEFAULT:
+    interface_driver: linuxbridge
