@@ -31,5 +31,9 @@
 - name: Prepare everything to run the os-nosdn-fds scenario
 >>>>>>> os-nosdn-fds: renaming the scenario from os-nosdn-vpp
   include_role:
+    name: "os-odl-bgpvpn"
+  when: DEPLOY_SCENARIO == 'os-odl-bgpvpn'
+- name: Prepare everything to run the os-nosdn-fds scenario
+  include_role:
     name: "os-nosdn-fds"
   when: DEPLOY_SCENARIO == 'os-nosdn-fds'
