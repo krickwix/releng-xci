@@ -101,15 +101,3 @@
         - ubuntu
         - centos
 
-- scenario: os-nosdn-fds
-  scm: git
-  src: https://github.com/krickwix/fds.git
-  version: master
-  role: scenarios/os-nosdn-fds/role/os-nosdn-fds
-  installers:
-    - installer: osa
-      flavors:
-        - mini
-      distros:
-        - ubuntu
-
