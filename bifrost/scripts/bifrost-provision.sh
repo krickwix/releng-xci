@@ -29,6 +29,9 @@ BIFROST_IRONIC_INSPECTOR_CLIENT_VERSION=${BIFROST_IRONIC_INSPECTOR_CLIENT_VERSIO
 BIFROST_IRONIC_CLIENT_VERSION=${BIFROST_IRONIC_CLIENT_VERSION:-master}
 BIFROST_IRONIC_VERSION=${BIFROST_IRONIC_VERSION:-master}
 
+# set UPPER_CONSTRAINTS_FILE since it is needed in order to limit libvirt-python to 4.0.0
+export UPPER_CONSTRAINTS_FILE=https://git.openstack.org/cgit/openstack/requirements/plain/upper-constraints.txt
+
 # Ensure the right inventory files is used based on branch
 CURRENT_BIFROST_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 if [ $CURRENT_BIFROST_BRANCH = "master" ]; then
@@ -74,6 +77,12 @@ export DIB_OS_PACKAGES=${DIB_OS_PACKAGES:-"vlan,vim,less,bridge-utils,language-p
 
 # Additional dib elements
 export EXTRA_DIB_ELEMENTS=${EXTRA_DIB_ELEMENTS:-"openssh-server"}
+
+# Copy the OS images if found
+if [[ -e ${XCI_PATH}/deployment_image.qcow2 ]]; then
+	sudo mkdir -p /httpboot
+	sudo mv ${XCI_PATH}/deployment_image.qcow2* /httpboot/
+fi
 
 if [ ${USE_VENV} = "true" ]; then
     export VENV=/opt/stack/bifrost
@@ -140,7 +149,9 @@ ${ANSIBLE} ${XCI_ANSIBLE_VERBOSITY} \
     -e ironicinspectorclient_git_branch=${BIFROST_IRONIC_INSPECTOR_CLIENT_VERSION} \
     -e ironicclient_source_install=true \
     -e ironicclient_git_branch=${BIFROST_IRONIC_CLIENT_VERSION} \
-    -e ironic_git_branch=${BIFROST_IRONIC_VERSION}
+    -e ironic_git_branch=${BIFROST_IRONIC_VERSION} \
+    -e use_prebuilt_images=${BIFROST_USE_PREBUILT_IMAGES} \
+    -e xci_distro=${XCI_DISTRO}
 EXITCODE=$?
 
 if [ $EXITCODE != 0 ]; then
