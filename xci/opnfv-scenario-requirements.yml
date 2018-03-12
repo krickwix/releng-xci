@@ -84,9 +84,6 @@
         - ha
         - mini
         - noha
-      distros:
-        - ubuntu
-        - centos
 
 - scenario: os-nosdn-fds
   scm: git
@@ -100,4 +97,5 @@
       distros:
         - ubuntu
         - centos
+
 
