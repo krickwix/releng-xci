@@ -120,7 +120,7 @@ ${ANSIBLE} ${XCI_ANSIBLE_VERBOSITY} \
        -e ${INVENTORY_FILE_FORMAT}=${BAREMETAL_DATA_FILE}
 
 # Execute the installation and VM startup test
-${ANIBLE} ${XCI_ANSIBLE_VERBOSITY} \
+${ANSIBLE} ${XCI_ANSIBLE_VERBOSITY} \
     -i inventory/bifrost_inventory.py \
     ${TEST_PLAYBOOK} \
     -e use_cirros=${USE_CIRROS} \
