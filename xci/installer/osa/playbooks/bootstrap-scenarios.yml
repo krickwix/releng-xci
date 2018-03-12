@@ -25,10 +25,6 @@
   include_role:
     name: "os-odl-bgpvpn"
   when: DEPLOY_SCENARIO == 'os-odl-bgpvpn'
-- name: Prepare everything to run the os-nosdn-vpp scenario
-  include_role:
-    name: "os-odl-bgpvpn"
-  when: DEPLOY_SCENARIO == 'os-odl-bgpvpn'
 - name: Prepare everything to run the os-nosdn-fds scenario
   include_role:
     name: "os-nosdn-fds"
