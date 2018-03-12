@@ -103,25 +103,6 @@ echo "-------------------------------------------------------------------------"
 bash files/install-ansible.sh
 echo "-------------------------------------------------------------------------"
 
-case ${XCI_DISTRO,,} in
-    # These should ideally match the CI jobs
-    ubuntu)
-        export DIB_OS_RELEASE="${DIB_OS_RELEASE:-xenial}"
-        export DIB_OS_ELEMENT="${DIB_OS_ELEMENT:-ubuntu-minimal}"
-        export DIB_OS_PACKAGES="${DIB_OS_PACKAGES:-vlan,vim,less,bridge-utils,language-pack-en,iputils-ping,rsyslog,curl,iptables}"
-        ;;
-    centos)
-        export DIB_OS_RELEASE="${DIB_OS_RELEASE:-7}"
-        export DIB_OS_ELEMENT="${DIB_OS_ELEMENT:-centos-minimal}"
-        export DIB_OS_PACKAGES="${DIB_OS_PACKAGES:-vim,less,bridge-utils,iputils,rsyslog,curl,iptables}"
-        ;;
-    opensuse)
-        export DIB_OS_RELEASE="${DIB_OS_RELEASE:-42.3}"
-        export DIB_OS_ELEMENT="${DIB_OS_ELEMENT:-opensuse-minimal}"
-        export DIB_OS_PACKAGES="${DIB_OS_PACKAGES:-vim,less,bridge-utils,iputils,rsyslog,curl,iptables}"
-        ;;
-esac
-
 # Clone OPNFV scenario repositories
 #-------------------------------------------------------------------------------
 # This playbook
@@ -131,7 +112,7 @@ esac
 echo "Info: Cloning OPNFV scenario repositories"
 echo "-------------------------------------------------------------------------"
 cd $XCI_PATH/xci/playbooks
-ansible-playbook ${XCI_ANSIBLE_VERBOSITY} -i inventory get-opnfv-scenario-requirements.yml
+ansible-playbook ${XCI_ANSIBLE_VERBOSITY} -i "localhost," get-opnfv-scenario-requirements.yml
 echo "-------------------------------------------------------------------------"
 
 #-------------------------------------------------------------------------------
@@ -156,7 +137,7 @@ sudo sed -i "s/^Defaults.*env_reset/#&/" /etc/sudoers
 cd $XCI_PATH/bifrost/
 sudo -E bash ./scripts/destroy-env.sh
 cd $XCI_PLAYBOOKS
-ansible-playbook ${XCI_ANSIBLE_VERBOSITY} -i inventory provision-vm-nodes.yml
+ansible-playbook ${XCI_ANSIBLE_VERBOSITY} -i "localhost," bootstrap-bifrost.yml
 cd ${XCI_CACHE}/repos/bifrost
 bash ./scripts/bifrost-provision.sh
 echo "-----------------------------------------------------------------------"
