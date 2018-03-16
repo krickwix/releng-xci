@@ -120,7 +120,7 @@ COMMON_DISTRO_PKGS=(vim strace gdb htop dnsmasq docker iptables ebtables virt-ma
 case ${ID,,} in
 	*suse)
 		pkg_mgr_cmd="sudo zypper -q -n ref"
-		pkg_mgr_cmd+=" && sudo zypper -q -n install ${COMMON_DISTRO_PKGS[@]} qemu-kvm qemu-tools libvirt-daemon libvirt-client libvirt-daemon-driver-qemu"
+		pkg_mgr_cmd+=" && sudo zypper -q -n install ${COMMON_DISTRO_PKGS[@]} qemu-tools libvirt-daemon libvirt-client libvirt-daemon-driver-qemu"
 		;;
 	centos)
 		pkg_mgr_cmd="yum updateinfo"
@@ -259,9 +259,9 @@ done
 # Fix up perms if needed to make ssh happy
 chmod 600 ${BASE_PATH}/xci/scripts/vm/id_rsa_for_dib*
 # Remove it from known_hosts
-ssh-keygen -R $_ip || true
-ssh-keygen -R ${VM_NAME} || true
-ssh-keygen -R ${OPNFV_VM_IP} || true
+for item in $_ip ${VM_NAME} ${OPNFV_VM_IP} ${VM_NAME}_opnfv; do
+    ssh-keygen -R $item || true
+done
 
 # Initial ssh command until we setup everything
 vm_ssh="ssh -o StrictHostKeyChecking=no -i ${BASE_PATH}/xci/scripts/vm/id_rsa_for_dib -l devuser"

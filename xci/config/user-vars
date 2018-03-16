@@ -29,10 +29,10 @@ export XCI_CEPH_ENABLED=${XCI_CEPH_ENABLED:-false}
 #-------------------------------------------------------------------------------
 # Currently, there are two kinds of installers in XCI: osa and kubespray
 # Examples:
-#    export XCI_INSTALLER="osa"
+#    export INSTALLER_TYPE="osa"
 # or
-#    export XCI_INSTALLER="kubespray"
-export XCI_INSTALLER=${XCI_INSTALLER:-osa}
+#    export INSTALLER_TYPE="kubespray"
+export INSTALLER_TYPE=${INSTALLER_TYPE:-osa}
 
 #-------------------------------------------------------------------------------
 # Configure some other stuff
@@ -40,10 +40,8 @@ export XCI_INSTALLER=${XCI_INSTALLER:-osa}
 # Set the verbosity for ansible
 #
 # Examples:
-#   XCI_ANSIBLE_VERBOSITY="-v"
-# or
-#   XCI_ANSIBLE_VERBOSITY="-vvvv"
-export XCI_ANSIBLE_VERBOSITY=${XCI_ANSIBLE_VERBOSITY:-""}
+#   XCI_ANSIBLE_PARAMS="-v -e foo=bar"
+export XCI_ANSIBLE_PARAMS=${XCI_ANSIBLE_PARAMS:-""}
 export RUN_TEMPEST=${RUN_TEMPEST:-false}
 export CORE_OPENSTACK_INSTALL=${CORE_OPENSTACK_INSTALL:-false}
 export BIFROST_USE_PREBUILT_IMAGES=${BIFROST_USE_PREBUILT_IMAGES:-false}

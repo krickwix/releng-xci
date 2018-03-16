@@ -22,10 +22,10 @@ submit_bug_report() {
     echo "openstack/bifrost version: $OPENSTACK_BIFROST_VERSION"
     echo "openstack/openstack-ansible version: $OPENSTACK_OSA_VERSION"
     echo "xci flavor: $XCI_FLAVOR"
-    echo "xci installer: $XCI_INSTALLER"
+    echo "xci installer: $INSTALLER_TYPE"
     echo "xci scenario: $DEPLOY_SCENARIO"
     echo "Environment variables:"
-    env | grep --color=never '\(OPNFV\|XCI\|OPENSTACK\|SCENARIO\)'
+    env | grep --color=never '\(OPNFV\|XCI\|INSTALLER_TYPE\|OPENSTACK\|SCENARIO\)'
     echo "-------------------------------------------------------------------------"
 }
 
@@ -61,9 +61,11 @@ source $XCI_PATH/xci/config/pinned-versions
 # source flavor configuration
 source "$XCI_PATH/xci/config/${XCI_FLAVOR}-vars"
 # source installer configuration
-source "$XCI_PATH/xci/installer/${XCI_INSTALLER}/env" &>/dev/null || true
+source "$XCI_PATH/xci/installer/${INSTALLER_TYPE}/env" &>/dev/null || true
 # source xci configuration
 source $XCI_PATH/xci/config/env-vars
+# Make sure we pass XCI_PATH everywhere
+export XCI_ANSIBLE_PARAMS+=" -e XCI_PATH=${XCI_PATH}"
 
 if [[ -z $(echo $PATH | grep "$HOME/.local/bin")  ]]; then
     export PATH="$HOME/.local/bin:$PATH"
@@ -87,12 +89,13 @@ trap submit_bug_report ERR
 echo "Info: Starting XCI Deployment"
 echo "Info: Deployment parameters"
 echo "-------------------------------------------------------------------------"
+echo "OPNFV scenario: $DEPLOY_SCENARIO"
 echo "xci flavor: $XCI_FLAVOR"
-echo "xci installer: $XCI_INSTALLER"
+echo "xci installer: $INSTALLER_TYPE"
 echo "opnfv/releng-xci version: $(git rev-parse HEAD)"
 echo "openstack/bifrost version: $OPENSTACK_BIFROST_VERSION"
-echo "openstack/openstack-ansible version: $OPENSTACK_OSA_VERSION"
-echo "OPNFV scenario: $DEPLOY_SCENARIO"
+[[ "$INSTALLER_TYPE" == "osa" ]] && echo "openstack/openstack-ansible version: $OPENSTACK_OSA_VERSION"
+[[ "$INSTALLER_TYPE" == "kubespray" ]] && echo "kubespray version: $KUBESPRAY_VERSION"
 echo "-------------------------------------------------------------------------"
 
 #-------------------------------------------------------------------------------
@@ -112,7 +115,7 @@ echo "-------------------------------------------------------------------------"
 echo "Info: Cloning OPNFV scenario repositories"
 echo "-------------------------------------------------------------------------"
 cd $XCI_PATH/xci/playbooks
-ansible-playbook ${XCI_ANSIBLE_VERBOSITY} -i "localhost," get-opnfv-scenario-requirements.yml
+ansible-playbook ${XCI_ANSIBLE_PARAMS} -i "localhost," get-opnfv-scenario-requirements.yml
 echo "-------------------------------------------------------------------------"
 
 #-------------------------------------------------------------------------------
@@ -137,7 +140,7 @@ sudo sed -i "s/^Defaults.*env_reset/#&/" /etc/sudoers
 cd $XCI_PATH/bifrost/
 sudo -E bash ./scripts/destroy-env.sh
 cd $XCI_PLAYBOOKS
-ansible-playbook ${XCI_ANSIBLE_VERBOSITY} -i "localhost," bootstrap-bifrost.yml
+ansible-playbook ${XCI_ANSIBLE_PARAMS} -i "localhost," bootstrap-bifrost.yml
 cd ${XCI_CACHE}/repos/bifrost
 bash ./scripts/bifrost-provision.sh
 echo "-----------------------------------------------------------------------"
@@ -145,9 +148,9 @@ echo "Info: VM nodes are provisioned!"
 echo "-----------------------------------------------------------------------"
 
 # Deploy OpenStack on the selected installer
-echo "Info: Deploying '${XCI_INSTALLER}' installer"
+echo "Info: Deploying '${INSTALLER_TYPE}' installer"
 echo "-----------------------------------------------------------------------"
-source ${XCI_PATH}/xci/installer/${XCI_INSTALLER}/deploy.sh
+source ${XCI_PATH}/xci/installer/${INSTALLER_TYPE}/deploy.sh
 
 # Deployment time
 xci_deploy_time=$SECONDS
