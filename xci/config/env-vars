@@ -12,10 +12,6 @@ export OPENSTACK_OSA_HAPROXY_GIT_URL=${OPENSTACK_OSA_HAPROXY_GIT_URL:-https://gi
 export KEEPALIVED_GIT_URL=${KEEPALIVED_GIT_URL:-https://github.com/evrardjp/ansible-keepalived}
 
 # Configuration
-export OPNFV_RELENG_GIT_URL=https://gerrit.opnfv.org/gerrit/releng-xci.git
-export OPENSTACK_BIFROST_GIT_URL=https://github.com/krickwix/bifrost.git
-export OPENSTACK_OSA_GIT_URL=https://github.com/krickwix/openstack-ansible.git
-export OPENSTACK_OSA_OPENRC_GIT_URL=https://git.openstack.org/openstack/openstack-ansible-openstack_openrc
 export OPENSTACK_OSA_ETC_PATH=/etc/openstack_deploy
 export OPNFV_HOST_IP=192.168.122.2
 export XCI_FLAVOR_ANSIBLE_FILE_PATH=$XCI_PATH/xci/installer/$INSTALLER_TYPE/files/$XCI_FLAVOR
